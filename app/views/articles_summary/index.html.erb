@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NHKニュースまとめ</title>
+    <style>
+        body{
+            background-color: #fffaf0;
+        }
+
+        .form-clear button{
+            border-radius: 5px;
+        }
+        .form-container{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-top: 20px;
+            width: 100%;
+            background-color: #808080;
+            padding: 30px
+        }
+
+        .form-container input[type="text"]{
+            width: 600px;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .form-container input[type="submit"]{
+            width: 180px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        table{
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th{
+            font-weight: bold;
+            text-align: center;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-bottom: 2px solid #000;
+            background-color: #f0f2f7;
+        }
+
+        td{
+            font-size: 11px;
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+
+
+<body>
+    <h1> NHK News Scraper</h1>
+
+    <div class="form-clear">
+        <form action="/clear" method="post">
+            <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+            <button type="submit">キャッシュクリア</button>
+        </form>
+        <% if flash[:notice] %>
+            <p style="color: red;"><%= flash[:notice] %></p>
+        <% end %>
+    </div>
+
+    <div class="form-container">
+        <form action="/scrape" method="post">
+            <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+            <input type="text" name="url" placeholder="NHKnewsのURLを入力してください">
+            <input type="submit" value="実行">
+        </form>
+    </div>
+
+    <% if @error %>
+        <p style="color: red;"><%= @error %></p>
+    <% end %>
+
+    <% if @articles.present? %>
+        <table>
+            <thead>
+                <tr>
+                    <th>日時/タイトル</th>
+                    <th>スコア</th>
+                    <th>サマリー</th>
+                    <th>本文</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @articles.each do |article| %>
+                    <tr>
+                        <td><%= article[:date] %><br><b><%= article[:title] %></b></td>
+                        <td style="text-align: center;"><%= article[:risk_score] %></td>
+                        <td><%= article[:summary] %></td>
+                        <td><%= article[:content] %></td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    <% end %>
+</body>
+</html>
+
+
